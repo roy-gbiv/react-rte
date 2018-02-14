@@ -336,11 +336,16 @@ export default class EditorToolbar extends Component {
     this._focusEditor();
   }
 
-  _setLink(url: string) {
+  _setLink(url: string, openInNewTab: boolean) {
     let {editorState} = this.props;
     let contentState = editorState.getCurrentContent();
     let selection = editorState.getSelection();
-    contentState = contentState.createEntity(ENTITY_TYPE.LINK, 'MUTABLE', {url, target: '_blank' });
+    console.log('_setLink! it adds target blank here too...');
+    const data = {url, ...openInNewTab && {target: '_blank '}};
+    // if (openInNewTab) {
+    //   data.target = '_blank';
+    // }
+    contentState = contentState.createEntity(ENTITY_TYPE.LINK, 'MUTABLE', data);
     let entityKey = contentState.getLastCreatedEntityKey();
     let newEditorState = EditorState.push(editorState, contentState);
     this.setState({showLinkInput: false});
