@@ -11,6 +11,7 @@ type Props = {
   data: Object,
   onTogglePopover: Function,
   onSubmit: Function;
+  popoverForm: ReactNode;
 };
 
 export default class PopoverIconButton extends Component {
@@ -19,12 +20,13 @@ export default class PopoverIconButton extends Component {
   constructor() {
     super(...arguments);
     autobind(this);
+    this.buttonRef = React.createRef();
   }
 
   render() {
-    let {onTogglePopover, showPopover, ...props} = this.props; // eslint-disable-line no-unused-vars
+    let {onTogglePopover, showPopover, popoverForm, ...props} = this.props; // eslint-disable-line no-unused-vars
     return (
-      <IconButton {...props} onClick={onTogglePopover}>
+      <IconButton {...props} buttonRef={this.buttonRef} onClick={onTogglePopover}>
         {this._renderPopover()}
       </IconButton>
     );
@@ -41,6 +43,8 @@ export default class PopoverIconButton extends Component {
         data={this.props.data}
         onSubmit={this._onSubmit}
         onCancel={this._hidePopover}
+        popoverForm={this.props.popoverForm}
+        buttonNode={this.buttonRef.current}
       />
     );
   }

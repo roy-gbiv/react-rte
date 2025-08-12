@@ -1,6 +1,7 @@
 /* @flow */
 import React, {Component} from 'react';
-import {CompositeDecorator, Editor, EditorState, Modifier, RichUtils, Entity} from 'draft-js';
+import { CompositeDecorator, Editor, EditorState, Modifier, RichUtils, Entity } from 'draft-js';
+import { get } from 'lodash';
 import getDefaultKeyBinding from 'draft-js/lib/getDefaultKeyBinding';
 import changeBlockDepth from './lib/changeBlockDepth';
 import changeBlockType from './lib/changeBlockType';
@@ -67,6 +68,7 @@ type Props = {
 export default class RichTextEditor extends Component {
   props: Props;
   _keyEmitter: EventEmitter;
+  editor: HTMLDivElement;
 
   constructor() {
     super(...arguments);
@@ -101,6 +103,8 @@ export default class RichTextEditor extends Component {
       rootStyle,
       toolbarStyle,
       editorStyle,
+      linkForm,
+      removeLink,
       ...otherProps // eslint-disable-line comma-dangle
     } = this.props;
     let editorState = value.getEditorState();
@@ -119,6 +123,7 @@ export default class RichTextEditor extends Component {
     if (!readOnly) {
       editorToolbar = (
         <EditorToolbar
+          value={value}
           rootStyle={toolbarStyle}
           className={toolbarClassName}
           keyEmitter={this._keyEmitter}
@@ -127,6 +132,8 @@ export default class RichTextEditor extends Component {
           focusEditor={this._focus}
           toolbarConfig={toolbarConfig}
           customControls={customControls}
+          linkForm={linkForm}
+          removeLink={removeLink}
         />
       );
     }
@@ -145,7 +152,9 @@ export default class RichTextEditor extends Component {
             onTab={this._onTab}
             onChange={this._onChange}
             placeholder={placeholder}
-            ref="editor"
+            ref={(el) => {
+              this.editor = el;
+            }}
             spellCheck={true}
             readOnly={readOnly}
           />
@@ -328,7 +337,7 @@ export default class RichTextEditor extends Component {
   }
 
   _focus() {
-    this.refs.editor.focus();
+    this.editor.focus();
   }
 }
 
